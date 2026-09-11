@@ -22,7 +22,7 @@ $results = foreach ($case in $cases) {
     if ($case.ContainsKey('MaxSeconds') -and $result.duration_s -gt $case.MaxSeconds) { throw "$($case.Name): early failure exceeded cleanup grace: $($result.duration_s)" }
     if ($null -ne $case.Exit -and $result.exit_code -ne $case.Exit) { throw "$($case.Name): wrong exit" }
     if ($result.duration_s -gt ($case.Timeout / 1000 + 4.5)) { throw "$($case.Name): exceeded bounded timeout: $($result.duration_s)" }
-    if (![IO.File]::ReadAllText($outPath).Contains($case.Contains)) { throw "$($case.Name): partial output missing" }
+    if (![IO.File]::ReadAllText($outPath).Contains($case.Contains)) { throw "$($case.Name): partial output missing; bytes=$([Convert]::ToBase64String([IO.File]::ReadAllBytes($outPath)))" }
     if ($case.Name -eq 'partial-timeout' -and ![IO.File]::ReadAllText($errPath).Contains('partial-err')) { throw 'Partial stderr missing' }
     [pscustomobject]@{name=$case.Name; pass=$true; result=$result}
 }
