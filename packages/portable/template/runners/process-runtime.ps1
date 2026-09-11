@@ -24,7 +24,21 @@ function Invoke-AgentProcess {
     try {
         $outFile = [IO.FileStream]::new($StdoutPath, [IO.FileMode]::Create, [IO.FileAccess]::Write, [IO.FileShare]::Read, 4096, $true)
         $errFile = [IO.FileStream]::new($StderrPath, [IO.FileMode]::Create, [IO.FileAccess]::Write, [IO.FileShare]::Read, 4096, $true)
-        $started = $process.Start()
+        # .NET Framework creates an auto-flushed stdin writer using Console.InputEncoding.
+        # A UTF-8 system locale can otherwise inject its BOM before our raw prompt bytes.
+        # Newer .NET exposes a per-process setting; Framework needs a brief synchronous override.
+        $priorInputEncoding=$null;$restoreInputEncoding=$false
+        if($ProcessStartInfo.PSObject.Properties['StandardInputEncoding']) {
+            $ProcessStartInfo.StandardInputEncoding=[Text.UTF8Encoding]::new($false)
+        } else {
+            $priorInputEncoding=[Console]::InputEncoding
+            if($priorInputEncoding.GetPreamble().Length -gt 0) {
+                [Console]::InputEncoding=[Text.UTF8Encoding]::new($false)
+                $restoreInputEncoding=$true
+            }
+        }
+        try { $started = $process.Start() }
+        finally { if($restoreInputEncoding){[Console]::InputEncoding=$priorInputEncoding} }
         if (!$started) { throw 'Runner process did not start.' }
         # Copy bytes directly to files: timeout paths retain output already received.
         $outTask = $process.StandardOutput.BaseStream.CopyToAsync($outFile)

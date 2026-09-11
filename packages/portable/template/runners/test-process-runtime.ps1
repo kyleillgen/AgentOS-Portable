@@ -3,9 +3,28 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'process-runtime.ps1')
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
 $engine = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+# A native byte-echo fixture isolates pipe transport from PowerShell host stdin handling.
+$echoExe=Join-Path $OutputDirectory 'echo-fixture.exe'
+Add-Type -Language CSharp -OutputType ConsoleApplication -OutputAssembly $echoExe -TypeDefinition @"
+using System;
+using System.Text;
+public class AgentOSEchoFixture {
+    public static int Main() {
+        var output=Console.OpenStandardOutput();
+        byte[] prefix=Encoding.UTF8.GetBytes("echo:");
+        output.Write(prefix,0,prefix.Length);
+        Console.OpenStandardInput().CopyTo(output);
+        output.Flush();
+        Console.Error.Write("warning");
+        return 0;
+    }
+}
+"@
+$unicode='hello '+[char]0x03bb+[char]0x4e2d
 $cases = @(
     @{ Name='early-stdin-failure'; Code='[Console]::Out.Write("early-exit"); exit 0'; Input=('x' * 2000000); Timeout=60000; MaxSeconds=12; Exit=$null; Failure='process_io_error:*'; Contains='early-exit' },
     @{ Name='normal'; Code='$text=[Console]::In.ReadToEnd(); [Console]::Out.Write("echo:"+$text); [Console]::Error.Write("warning")'; Input='hello'; Timeout=15000; Exit=0; Failure=$null; Contains='echo:hello' },
+    @{ Name='unicode'; Code=''; Input=$unicode; Timeout=15000; Exit=0; Failure=$null; Contains=('echo:'+$unicode) },
     @{ Name='nonzero'; Code='[Console]::Out.Write("failed-output"); exit 7'; Input=''; Timeout=15000; Exit=7; Failure='nonzero_exit'; Contains='failed-output' },
     @{ Name='hanging-stdin'; Code='[Console]::Out.Write("before-input-hang"); [Console]::Out.Flush(); Start-Sleep -Seconds 30'; Input=('x' * 2000000); Timeout=6000; Exit=$null; Failure='timeout'; Contains='before-input-hang' },
     @{ Name='partial-timeout'; Code='[Console]::Out.Write("partial-out"); [Console]::Out.Flush(); [Console]::Error.Write("partial-err"); [Console]::Error.Flush(); Start-Sleep -Seconds 30'; Input=''; Timeout=6000; Exit=$null; Failure='timeout'; Contains='partial-out' },
@@ -15,14 +34,24 @@ $results = foreach ($case in $cases) {
     $info = New-Object Diagnostics.ProcessStartInfo
     $info.FileName = $engine
     $info.Arguments = '-NoLogo -NoProfile -NonInteractive -EncodedCommand ' + [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($case.Code))
+    if ($case.Name -in @('normal','unicode')) { $info.FileName=$echoExe; $info.Arguments='' }
     $outPath = Join-Path $OutputDirectory ($case.Name + '-stdout.txt')
     $errPath = Join-Path $OutputDirectory ($case.Name + '-stderr.txt')
-    $result = Invoke-AgentProcess -ProcessStartInfo $info -InputText $case.Input -TimeoutMilliseconds $case.Timeout -StdoutPath $outPath -StderrPath $errPath
+    $originalInputEncoding=[Console]::InputEncoding
+    try {
+        # Reproduce UTF-8 Windows hosts even when this developer machine uses another locale.
+        if($case.Name -in @('normal','unicode')) { [Console]::InputEncoding=[Text.UTF8Encoding]::new($true) }
+        $result = Invoke-AgentProcess -ProcessStartInfo $info -InputText $case.Input -TimeoutMilliseconds $case.Timeout -StdoutPath $outPath -StderrPath $errPath
+        if($case.Name -in @('normal','unicode')) {
+            if([IO.File]::ReadAllText($outPath) -cne $case.Contains) {throw 'Native stdin round-trip differs: BOM, corruption or extra bytes.'}
+            if([Console]::InputEncoding.GetPreamble().Length -ne 3) {throw 'Caller input encoding was not restored.'}
+        }
+    } finally { [Console]::InputEncoding=$originalInputEncoding }
     if ($result.failure_reason -notlike $case.Failure) { throw "$($case.Name): unexpected failure $($result.failure_reason)" }
     if ($case.ContainsKey('MaxSeconds') -and $result.duration_s -gt $case.MaxSeconds) { throw "$($case.Name): early failure exceeded cleanup grace: $($result.duration_s)" }
     if ($null -ne $case.Exit -and $result.exit_code -ne $case.Exit) { throw "$($case.Name): wrong exit" }
     if ($result.duration_s -gt ($case.Timeout / 1000 + 4.5)) { throw "$($case.Name): exceeded bounded timeout: $($result.duration_s)" }
-    if (![IO.File]::ReadAllText($outPath).Contains($case.Contains)) { throw "$($case.Name): partial output missing; bytes=$([Convert]::ToBase64String([IO.File]::ReadAllBytes($outPath)))" }
+    if (![IO.File]::ReadAllText($outPath).Contains($case.Contains)) { throw "$($case.Name): partial output missing; stdout_length=$((Get-Item -LiteralPath $outPath).Length)" }
     if ($case.Name -eq 'partial-timeout' -and ![IO.File]::ReadAllText($errPath).Contains('partial-err')) { throw 'Partial stderr missing' }
     [pscustomobject]@{name=$case.Name; pass=$true; result=$result}
 }

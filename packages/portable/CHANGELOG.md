@@ -4,6 +4,7 @@
 
 - First-run guide, read-only doctor, and a helper that prepares a uniquely named local greeting task without publishing or launching it.
 - Installation preflight rejects overlapping ledger/workspace paths, junctions, wildcard folder names, hidden runtime history and directory collisions before configuring.
+- BOM-free UTF-8 process input on Windows UTF-8 locales, verified with native ASCII/non-English byte round-trips; original console settings restored.
 - Serialized setup and atomic configuration replacement; existing installations and ledgers remain protected.
 - Versioned downloads, MIT license in both bundles, explicit template file inventory and release checks.
 - Windows CI exercises source scaffolding, both extracted install paths, diagnostics and the runtime with fake CLIs.
