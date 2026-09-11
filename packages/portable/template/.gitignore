@@ -1,0 +1,7 @@
+# Runtime files stay local; publish source/templates, not credentials or run logs.
+/state/
+/work/
+/runners/dispatcher.json.before-setup
+/runners/dispatcher.json.setup-lock
+/runners/dispatcher.json.setup-new
+/SETUP-REPORT.md

@@ -1,0 +1,12 @@
+{
+  "id": "dispatcher-smoke-001",
+  "status": "ready",
+  "owner": "codex",
+  "project_id": "onboarding",
+  "task_id": "dispatcher-smoke",
+  "assigned_revision": 2,
+  "authorization": "The principal authorizes one local greeting file and independent review only. No external actions, purchases, or email.",
+  "objective": "Write work/results/dispatcher-smoke-001/greeting.txt containing Hello, team! and one newline.",
+  "acceptance": "The greeting file contains exactly the specified text and newline. The reviewer independently reads and checks the file. Report evidence and any blockers.",
+  "budget": { "max_turns": 8 }
+}

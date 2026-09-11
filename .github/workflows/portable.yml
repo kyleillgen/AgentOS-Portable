@@ -1,0 +1,21 @@
+name: Portable package checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Scaffold checks
+        working-directory: packages/portable
+        run: npm test
+      - name: Download, install and runtime checks
+        shell: powershell
+        run: ./packages/portable/test/release.test.ps1

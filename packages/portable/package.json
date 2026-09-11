@@ -1,0 +1,30 @@
+{
+  "name": "agentos-file-workspace",
+  "version": "0.2.1",
+  "private": true,
+  "description": "A portable, file-based coordination workspace for multiple AI agents",
+  "bin": {
+    "agentos-init": "bin/init.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/init.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin",
+    "template",
+    "README.md",
+    "ARCHITECTURE.md",
+    "START-HERE.md",
+    "AGENT-SETUP.md",
+    "Install-AgentOS.ps1",
+    "build-bundles.ps1",
+    "test",
+    "LICENSE",
+    "CHANGELOG.md",
+    "release-files.txt"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,14 @@
+{
+  "host": "CONFIGURE_WITH_SETUP",
+  "settle_seconds": 30,
+  "timeout_minutes": 20,
+  "claude_max_turns": 25,
+  "codex": "CONFIGURE_WITH_SETUP",
+  "claude": "CONFIGURE_WITH_SETUP",
+  "run_ledger": null,
+  "git_checkpoint_script": null,
+  "health_script": null,
+  "relay_python": null,
+  "codex_wsl_distribution": null,
+  "codex_wsl_user": null
+}
