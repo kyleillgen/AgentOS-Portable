@@ -9,7 +9,7 @@ $fixtureConfig|ConvertTo-Json -Depth 10|Set-Content "$workspace/runners/dispatch
 $binary=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
 & "$PSScriptRoot/setup.ps1" -Root $workspace -CodexPath $binary -ClaudePath $binary -LedgerDirectory $ledger
 $config=Get-Content "$workspace/runners/dispatcher.json" -Raw|ConvertFrom-Json
-if($config.host -ne $env:COMPUTERNAME -or $config.run_ledger -ne $ledger) { throw 'Configuration mismatch' }
+if($config.host -ne $env:COMPUTERNAME -or $config.run_ledger -ne [IO.Path]::GetFullPath($ledger)) { throw 'Configuration mismatch' }
 $before=(Get-FileHash "$ledger/ledger.json").Hash
 $refused=$false
 try { & "$PSScriptRoot/setup.ps1" -Root $workspace -CodexPath $binary -ClaudePath $binary -LedgerDirectory $ledger } catch { $refused=$true }

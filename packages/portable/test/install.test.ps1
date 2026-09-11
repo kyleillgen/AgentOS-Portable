@@ -9,7 +9,7 @@ $binary=Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.ex
 foreach($path in @('AGENTS.md','runners/dispatcher.ps1','runners/README.md','runners/test-all.ps1','.gitignore')) {
     if((Get-FileHash (Join-Path $dest $path)).Hash -ne (Get-FileHash (Join-Path "$packageRoot/template" $path)).Hash) { throw "Template mismatch: $path" }
 }
-if((Get-Content "$dest/runners/dispatcher.json" -Raw|ConvertFrom-Json).run_ledger -ne $ledger) { throw 'Guided configuration not set' }
+if((Get-Content "$dest/runners/dispatcher.json" -Raw|ConvertFrom-Json).run_ledger -ne [IO.Path]::GetFullPath($ledger)) { throw 'Guided configuration not set' }
 $rejected=$false
 try { & "$packageRoot/Install-AgentOS.ps1" -Destination $dest -CodexPath $binary -ClaudePath $binary -LedgerDirectory $ledger } catch { $rejected=$true }
 if(!$rejected) { throw 'Guided installer overwrote existing directory' }
