@@ -15,3 +15,5 @@ try{$ErrorActionPreference='Continue';& $engine @arguments *> $null;$rejected=$L
 if($rejected -eq 0){throw 'IAF installer alias swallowed duplicate-install failure.'}
 if((Get-FileHash -LiteralPath (Join-Path $destination 'TEAM.md')).Hash -ne $before){throw 'Duplicate install changed the fixture.'}
 Write-Output 'PASS: IAF installer alias preserves arguments, successful setup, nonzero failure and existing files. No provider calls.'
+# GitHub's PowerShell wrapper exits with LASTEXITCODE; the refusal above was expected.
+$global:LASTEXITCODE=0
