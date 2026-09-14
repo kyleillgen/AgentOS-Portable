@@ -1,6 +1,6 @@
 # Agent installation instructions
 
-You are setting up AgentOS for the person who provided this bundle. Read START-HERE.md, template/FIRST-RUN.md, template/runners/README.md and template/TEAM.md. Use the same setup scripts as the manual path; do not invent a second dispatcher or silently replace installed infrastructure.
+You are setting up IAF Protocol for the person who provided this bundle. Read START-HERE.md, template/FIRST-RUN.md, template/runners/README.md and template/TEAM.md. Use the same setup scripts as the manual path; do not invent a second dispatcher or silently replace installed infrastructure.
 
 ## 1. Establish where you can act
 
@@ -10,7 +10,7 @@ If local execution is unavailable, prepare the extracted workspace and a short h
 
 ## 2. Inspect before modifying
 
-Check existing AgentOS folders, relevant scheduled tasks, PowerShell, Git, and installed Codex and Claude CLI versions/paths. Confirm or obtain a new destination and a separate local ledger location. Prefer a new folder in the user's Documents folder and a new ledger folder under their local application data. Do not merge into an existing installation. Do not change existing scheduled tasks, global model configuration, or other agent systems.
+Check existing IAF Protocol folders, relevant scheduled tasks, PowerShell, Git, and installed Codex and Claude CLI versions/paths. Confirm or obtain a new destination and a separate local ledger location. Prefer a new folder in the user's Documents folder and a new ledger folder under their local application data. Do not merge into an existing installation. Do not change existing scheduled tasks, global model configuration, or other agent systems.
 
 Configure the user as principal. Ask only for missing material choices: destination if uncertain, permissions for this workspace, accounts to use, and whether background boot-start operation is wanted. The installation request authorizes ordinary setup within the agreed scope, not email, purchases, sharing private data with new providers, or bypassing security controls.
 
@@ -22,7 +22,7 @@ Ask the user to complete each interactive sign-in in the provider's own interfac
 
 ## 4. Use the shared installation path
 
-From the extracted agent bundle, run Install-AgentOS.ps1 with the agreed new destination, resolved Codex/Claude executables, and new external ledger directory. This copies template/ and calls the same runners/setup.ps1 that a manual user runs. It does not start models or install a scheduled task.
+From the extracted agent bundle, run Install-IAF.ps1 with the agreed new destination, resolved Codex/Claude executables, and new external ledger directory. This copies template/ and calls the same runners/setup.ps1 that a manual user runs. It does not start models or install a scheduled task.
 
 Fill TEAM.md with the principal, designated coordinator, producer/reviewer sessions, verified access, limits, and handoff method. Use the supplied scripts unchanged unless a concrete defect prevents setup. If a fix is required, preserve the original and report it. Use paths without brackets or junctions, keep workspace and ledger separate, and preserve a partially failed installation for inspection; never initialize over runtime history.
 

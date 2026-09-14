@@ -25,7 +25,7 @@ $manual=Join-Path $stage 'manual';$agent=Join-Path $stage 'agent'
 $null=New-Item -ItemType Directory -Path $manual,$agent
 Get-ChildItem -LiteralPath $template -Force|Copy-Item -Destination $manual -Recurse
 Copy-Item -LiteralPath (Join-Path $template 'FIRST-RUN.md') -Destination (Join-Path $manual 'START-HERE.md')
-foreach($name in @('template','bin','test','package.json','README.md','ARCHITECTURE.md','START-HERE.md','AGENT-SETUP.md','Install-AgentOS.ps1','build-bundles.ps1','LICENSE','CHANGELOG.md','release-files.txt')) {Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination $agent -Recurse}
+foreach($name in @('template','bin','test','package.json','README.md','ARCHITECTURE.md','START-HERE.md','AGENT-SETUP.md','Install-AgentOS.ps1','Install-IAF.ps1','build-bundles.ps1','LICENSE','CHANGELOG.md','release-files.txt')) {Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination $agent -Recurse}
 [IO.Compression.ZipFile]::CreateFromDirectory($manual,(Join-Path $OutputDirectory $bundleNames[0]))
 [IO.Compression.ZipFile]::CreateFromDirectory($agent,(Join-Path $OutputDirectory $bundleNames[1]))
 $a=[IO.Compression.ZipFile]::OpenRead((Join-Path $OutputDirectory $bundleNames[0]))

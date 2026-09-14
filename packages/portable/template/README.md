@@ -1,4 +1,4 @@
-# Your AgentOS workspace
+# Your IAF Protocol workspace
 
 Start here. This folder coordinates people and AI agents using ordinary files.
 

@@ -1,4 +1,4 @@
-name: Portable package checks
+name: IAF Protocol package checks
 on:
   push:
   pull_request:
@@ -19,3 +19,9 @@ jobs:
       - name: Download, install and runtime checks
         shell: powershell
         run: ./packages/portable/test/release.test.ps1
+      - name: IAF entry point compatibility checks
+        shell: powershell
+        run: ./packages/portable/test/aliases.test.ps1
+      - name: Deployment profile, recovery and removal checks
+        shell: powershell
+        run: ./packages/deployment/test/profiles.test.ps1 -PythonPath (Get-Command python.exe).Source

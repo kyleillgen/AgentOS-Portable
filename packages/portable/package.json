@@ -1,9 +1,10 @@
 {
-  "name": "agentos-file-workspace",
+  "name": "iaf-file-workspace",
   "version": "0.2.1",
   "private": true,
-  "description": "A portable, file-based coordination workspace for multiple AI agents",
+  "description": "IAF Protocol — It's All Files. Shared assignments, results and independent review for AI agents.",
   "bin": {
+    "iaf-init": "bin/init.mjs",
     "agentos-init": "bin/init.mjs"
   },
   "scripts": {
@@ -24,7 +25,8 @@
     "test",
     "LICENSE",
     "CHANGELOG.md",
-    "release-files.txt"
+    "release-files.txt",
+    "Install-IAF.ps1"
   ],
   "license": "MIT"
 }

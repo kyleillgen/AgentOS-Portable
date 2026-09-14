@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "name": "IAF Protocol deployment profiles",
+  "version": "0.3.0",
+  "release_status": "source-preview",
+  "foundation_version": "0.2.1",
+  "profiles": {
+    "Manual": [
+      "base"
+    ],
+    "Automated": [
+      "base",
+      "runner"
+    ],
+    "Unattended": [
+      "base",
+      "runner",
+      "operations"
+    ]
+  },
+  "modules": {
+    "base": {
+      "requires": [],
+      "contract": "agentos-file-protocol-v1"
+    },
+    "runner": {
+      "requires": [
+        "base"
+      ],
+      "providers": [
+        "codex",
+        "claude"
+      ],
+      "contract": "agentos-runtime-v1"
+    },
+    "operations": {
+      "requires": [
+        "runner"
+      ],
+      "contract": "agentos-operations-v1"
+    },
+    "desk": {
+      "requires": [
+        "operations"
+      ],
+      "contract": "agentos-operations-v1"
+    }
+  }
+}

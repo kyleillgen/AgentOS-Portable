@@ -18,7 +18,7 @@ Get-Command codex,claude | Select-Object Name,Source
 
 The dispatcher requires absolute paths to actual .exe files, not .cmd/.ps1 npm shims. Prefer native CLI installations. If Codex was installed through npm, `npm root -g` locates global packages; inspect its @openai directory recursively for codex.exe and use the binary matching your Windows architecture. Run that exact executable with --version before configuring it. Do not pick an arbitrary old app-bundled version. Keep the resolved paths current after upgrades.
 
-No provider source build is required. AgentOS calls Codex's `exec` mode and Claude's print/JSON mode. See [Codex non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode) and [Claude CLI reference](https://code.claude.com/docs/en/cli-reference). CLI flags can change: run the supplied tests and a real smoke task after upgrades. No paid model calls are made by installation or fake-CLI tests.
+No provider source build is required. IAF Protocol calls Codex's `exec` mode and Claude's print/JSON mode. See [Codex non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode) and [Claude CLI reference](https://code.claude.com/docs/en/cli-reference). CLI flags can change: run the supplied tests and a real smoke task after upgrades. No paid model calls are made by installation or fake-CLI tests.
 
 ## 2. Configure the workspace
 
@@ -31,7 +31,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\runners\setup.ps1 `
   -LedgerDirectory "$env:LOCALAPPDATA\AgentOS-Ledger"
 ```
 
-The agent-assisted bundle performs the same operation through Install-AgentOS.ps1, adding a -Destination argument to copy the same template first. Setup refuses existing configuration, ledger directories, and runtime history. It never installs a task or launches a model. Keep the ledger private and backed up. It is outside the normal shared context, not an OS security boundary against programs with the same Windows permissions. Avoid junctions/symlinks and cloud-synced ledger locations.
+The agent-assisted bundle performs the same operation through Install-IAF.ps1, adding a -Destination argument to copy the same template first. Setup refuses existing configuration, ledger directories, and runtime history. It never installs a task or launches a model. Keep the ledger private and backed up. It is outside the normal shared context, not an OS security boundary against programs with the same Windows permissions. Avoid junctions/symlinks and cloud-synced ledger locations.
 
 Generated runners/dispatcher.json records the designated hostname, both executable paths and the ledger location. Model selection remains in each client configuration/default; this release does not automatically choose a model by task size. Defaults are a 30-second settle period, 20 minutes per model attempt, and a Claude ceiling of 25 turns. Task budgets can tighten that ceiling. Source/search limits and Codex turn limits are advisory. Edit settings only while the monitor and dispatcher are stopped.
 

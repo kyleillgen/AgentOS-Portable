@@ -1,3 +1,9 @@
+# IAF Protocol rename (unreleased source)
+
+- Public identity is IAF Protocol (It's All Files), formerly AgentOS.
+- Added Install-IAF.ps1 and iaf-init entry points; existing entry points remain compatible.
+- Existing 0.2.1 release archives, names, hashes and historical notes below remain unchanged.
+
 # Changes
 
 ## 0.2.1 — early preview
